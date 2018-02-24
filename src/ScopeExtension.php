@@ -7,6 +7,9 @@ use Nette;
 
 abstract class ScopeExtension extends Nette\DI\CompilerExtension
 {
+	/** name of service which holds instance of outer container */
+	private const OUTER_CONTAINER_SERVICE_NAME = 'outerContainer';
+
 	/** @var string */
 	private $innerContainerClassName;
 
@@ -50,12 +53,12 @@ abstract class ScopeExtension extends Nette\DI\CompilerExtension
 			'}',
 			'',
 			"\$service = new {$this->innerContainerClassName};",
-			'$service->addService(\'outerContainer\', $this);',
+			'$service->addService(?, $this);',
 			'return $service;',
 		]);
 
 		$createInnerContainerMethod = $class->getMethod(Nette\DI\Container::getMethodName($this->prefix('container')));
-		$createInnerContainerMethod->setBody($code, [$this->innerContainerPath]);
+		$createInnerContainerMethod->setBody($code, [$this->innerContainerPath, self::OUTER_CONTAINER_SERVICE_NAME]);
 	}
 
 
@@ -67,23 +70,21 @@ abstract class ScopeExtension extends Nette\DI\CompilerExtension
 		];
 
 		$configurator->onCompile[] = function (Nette\Configurator $configurator, Nette\DI\Compiler $compiler): void {
-			$compiler->getContainerBuilder()->addDefinition('outerContainer')
+			$compiler->getContainerBuilder()->addDefinition(self::OUTER_CONTAINER_SERVICE_NAME)
 				->setType(Nette\DI\Container::class)
 				->setAutowired(false)
 				->setDynamic(true);
 		};
 
 		$parameters = $this->getContainerBuilder()->parameters;
-		$configurator->addParameters([
+		$configurator->addParameters($this->config + [
 			'appDir' => $parameters['appDir'],
 			'wwwDir' => $parameters['wwwDir'],
+			'tempDir' => $parameters['tempDir'],
 			'debugMode' => $parameters['debugMode'],
 			'productionMode' => $parameters['productionMode'],
 			'consoleMode' => $parameters['consoleMode'],
 		]);
-		$configurator->setTempDirectory($parameters['tempDir']);
-
-		$configurator->addParameters($this->config);
 
 		return $configurator;
 	}
