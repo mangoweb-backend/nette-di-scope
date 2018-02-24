@@ -1,0 +1,11 @@
+{
+	"name": "mangoweb/nette-di-scope",
+	"description": "Multiple DI containers support for Nette DI",
+	"type": "library",
+	"require": {
+		"php": "~7.1",
+		"nette/di": "~2.4",
+		"nette/bootstrap": "~2.4"
+	},
+	"license": "MIT"
+}
