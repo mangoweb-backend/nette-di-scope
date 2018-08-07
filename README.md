@@ -1,6 +1,6 @@
 # Nette DI Scope
 
-Split your app into well-defined scopes and enforce relationship between them.
+Split your app into well-defined scopes and enforce relationships between them.
 
 ## Learning resources:
 
