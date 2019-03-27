@@ -28,8 +28,13 @@ abstract class ScopeExtension extends Nette\DI\CompilerExtension
 
 		$innerContainer = $this->createInnerConfigurator()->createContainer();
 		$innerContainerReflection = new \ReflectionClass($innerContainer);
-		$this->innerContainerClassName = $innerContainerReflection->getName();
-		$this->innerContainerPath = $innerContainerReflection->getFileName();
+
+		$name = $innerContainerReflection->getName();
+		$fileName = $innerContainerReflection->getFileName();
+		assert($fileName !== false);
+
+		$this->innerContainerClassName = $name;
+		$this->innerContainerPath = $fileName;
 
 		$innerContainerDefinition = $builder->addDefinition($this->prefix('container'));
 		$innerContainerDefinition->setType(Nette\DI\Container::class);
