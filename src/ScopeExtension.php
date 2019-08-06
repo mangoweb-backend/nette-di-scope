@@ -75,10 +75,9 @@ abstract class ScopeExtension extends Nette\DI\CompilerExtension
 		];
 
 		$configurator->onCompile[] = function (Nette\Configurator $configurator, Nette\DI\Compiler $compiler): void {
-			$compiler->getContainerBuilder()->addDefinition(self::OUTER_CONTAINER_SERVICE_NAME)
+			$compiler->getContainerBuilder()->addImportedDefinition(self::OUTER_CONTAINER_SERVICE_NAME)
 				->setType(Nette\DI\Container::class)
-				->setAutowired(false)
-				->setDynamic(true);
+				->setAutowired(false);
 		};
 
 		$parameters = $this->getContainerBuilder()->parameters;
